@@ -6,6 +6,13 @@
 
 Find more info [here](http://tulip.labri.fr/TulipDrupal/).
 
-This page contains Tulip plugins using Tulip API or [Tulip Python API](http://tulip.labri.fr/Documentation/current/tulip-python/html). They are implementation of well-known (orless know) graph algorithms and network analysis methods.
+This page contains Tulip plugins using [Tulip API](http://tulip.labri.fr/Documentation/current/doxygen/html/index.html) or [Tulip Python API](http://tulip.labri.fr/Documentation/current/tulip-python/html). They are implementation of well-known (orless know) graph algorithms and network analysis methods.
 
 ## Available Plugins
+
+
+### Label Propagation
+
+Folder name: LabelPropagation
+
+A simple, fast and efficient graph clustering algorithm. 
