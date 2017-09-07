@@ -6,6 +6,6 @@
 
 Find more info [here](http://tulip.labri.fr/TulipDrupal/).
 
-One of the goal of Tulip is to facilitates the reuse of components and allows the developers to focus on programming their application.
+This page contains Tulip plugins using Tulip API or [Tulip Python API](http://tulip.labri.fr/Documentation/current/tulip-python/html). They are implementation of well-known (orless know) graph algorithms and network analysis methods.
 
 ## Available Plugins
