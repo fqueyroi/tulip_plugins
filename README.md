@@ -16,3 +16,4 @@ This page contains Tulip plugins using [Tulip API](http://tulip.labri.fr/Documen
 Folder name: LabelPropagation
 
 A simple, fast and efficient graph clustering algorithm. 
+Applying on <img src="http://www.sciweavers.org/tex2img.php?eq=G%3D%28V%2CE%2Cw%29&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0" align="center" border="0" alt="G=(V,E,w)" width="106" height="18" />
