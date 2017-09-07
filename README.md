@@ -31,4 +31,7 @@ and
 detection in large networks.* Physical Review E, 79(6) :066107, 2009.
 
 
+### [Minimum Spanning Tree](https://github.com/fqueyroi/tulip_plugins/tree/master/MinimumSpanningTree)
+
+Compute the [Minimum Spanning Tree](https://en.wikipedia.org/wiki/Minimum_spanning_tree) of the graph (Python script) using a [Union-Find](https://en.wikipedia.org/wiki/Kruskal%27s_algorithm) data structure. 
 
