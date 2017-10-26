@@ -10,7 +10,7 @@ This page contains Tulip plugins using [Tulip API](http://tulip.labri.fr/Documen
 
 ## Available Plugins
 
-### Transportation Networks Design
+### [Transportation Networks Design](https://github.com/fqueyroi/tulip_plugins/tree/master/TransportationNetworks)
 
 Directory "TransportationNetworks" contains two transportation network construction algorithms. 
 - SPRouting: use iterative shortest-path routing of flow
