@@ -10,6 +10,13 @@ This page contains Tulip plugins using [Tulip API](http://tulip.labri.fr/Documen
 
 ## Available Plugins
 
+### [Transportation Networks Design](https://github.com/fqueyroi/tulip_plugins/tree/master/TransportationNetworks)
+
+Directory "TransportationNetworks" contains two transportation network construction algorithms. 
+- SPRouting: use iterative shortest-path routing of flow
+- PhysariumSolver: use biologically inspired routing and edge length update.
+
+The two algorithm only differ in the way flows are routed along the networks. 
 
 ### [Label Propagation](https://github.com/fqueyroi/tulip_plugins/tree/master/LabelPropagation)
 
