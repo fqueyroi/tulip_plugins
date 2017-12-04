@@ -42,3 +42,14 @@ detection in large networks.* Physical Review E, 79(6) :066107, 2009.
 
 Compute the [Minimum Spanning Tree](https://en.wikipedia.org/wiki/Minimum_spanning_tree) of the graph (Python script) using a [Union-Find](https://en.wikipedia.org/wiki/Kruskal%27s_algorithm) data structure. 
 
+### [Vertex Cycle Cover and Secret Santa!](https://github.com/fqueyroi/tulip_plugins/tree/master/VertexCycleCover)
+
+![Christmas!](https://cdn.pixabay.com/photo/2013/07/13/13/58/holly-161840_960_720.png)
+
+[Secret Santa](https://en.wikipedia.org/wiki/Secret_Santa) is a way for people to exchange gifts but where each person only knows who he/she has to give a gift to. Traditionnaly Secret Santa assignments rame done randomly: each participant pick the name of another participant. 
+
+But one can assume that not all assignments are possible. For example, one can want an assignment where parents can be assigned to own children or where colleagues in a company have to be assigned to people working in another department. 
+
+If we assume the the various possibilities are summed up by an graph G (an arc between A->B indicates that "A must offer a gift to B" is a possibility) then the problem is to find a [Vertex Cycle Cover](https://en.wikipedia.org/wiki/Vertex_cycle_cover) of G. This problem can be solved by using a maximum matching algorithm.
+
+However, the Secret Santa has to be ... secret. Therefore, the Tulip Python plugin "SecretSanta" find a solution where the knowledge a given assignment can not be used to infer another assignment. This is an implementation of the algorithm by [Liberti and Raimondi](https://link.springer.com/chapter/10.1007/978-3-540-68880-8_26) (2008).
