@@ -44,7 +44,7 @@ Compute the [Minimum Spanning Tree](https://en.wikipedia.org/wiki/Minimum_spanni
 
 ### [Vertex Cycle Cover and Secret Santa!](https://github.com/fqueyroi/tulip_plugins/tree/master/VertexCycleCover)
 
-![Christmas!](https://cdn.pixabay.com/photo/2013/07/13/13/58/holly-161840_960_720.png)
+![Christmas!](http://mumuland.m.u.pic.centerblog.net/750a9603.png)
 
 [Secret Santa](https://en.wikipedia.org/wiki/Secret_Santa) is a way for people to exchange gifts but where each person only knows who he/she has to give a gift to. Traditionnaly Secret Santa assignments rame done randomly: each participant pick the name of another participant. 
 
