@@ -22,9 +22,7 @@ The two algorithm only differ in the way flows are routed along the networks.
 
 A simple, fast and efficient graph clustering algorithm. For a weighted graph G=(V,E,w), it produces a *partition* of the vertices V. 
 
-The algorithm iteratively change vertices labels (that correspond to cluster). A vertex will take as label the label that occurs the most in this neighborhood. The algoithm will stop after a sufficient number of iterations.
-
-The method originaly appeared in :
+The algorithm iteratively change vertices labels (that correspond to cluster). A vertex will take as label the label that occurs the most in its neighborhood. The algoithm will stop after a sufficient number of iterations.
 
 For more details see:
 
