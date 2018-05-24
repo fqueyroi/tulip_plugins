@@ -1,0 +1,16 @@
+This folder contains the scripts for the paper
+F. Queyroi, "Biological and Shortest-Path Routing Procedures for Transportation Network Design", 2018.
+arXiv:1803.03528
+
+
+*************************
+Description of the files:
+
+- experiment_randomgrid.py : Tylip Python script (http://tulip.labri.fr/Documentation/3_6/pythonDoc/) used to generate random grids with uniform or gravity-modelled transfers between random points. Files 20171117_res8unif_alpha.csv and 20171128_res8zipf_alpha.csv  are outputs of this script.  
+This requires the installation of the three Tulip plugins in the "TransportationNetworks" directory : FlowBetweenness, SPRouting and PhysariumSolver.
+
+- plot_exp_alpha.R : R script (https://www.r-project.org/) used to produce Figures 2-3 of the paper using data from files 20171117_res8unif_alpha.csv and 20171128_res8zipf_alpha.csv
+
+- stats_experiments.py :  Tylip Python script used in experiment_randomgrid.py to compute the performance, cost and fault tolerance of the networks.
+
+- distance.py :  Tylip Python script used to compute minimum distances in the networks. 

@@ -1,0 +1,12 @@
+This folder contains the data for the paper
+F. Queyroi, "Biological and Shortest-Path Routing Procedures for Transportation Network Design", 2018.
+arXiv:1803.03528
+
+*************************
+Description of the files:
+
+- 20171117_res8unif_alpha.csv : CSV data files containing the values of the fitness measures for uniform tranfers 
+
+- 20171128_res8zipf_alpha.csv : CSV data files  containing the values of the fitness measures for gravity-modelled transfers
+
+- pdl_grid.tlpx : Tulip graph file containing the grid used to compute Figures 4-5 and Tables 1-2 in the paper. 
