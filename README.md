@@ -8,15 +8,20 @@ Find more info [here](http://tulip.labri.fr/TulipDrupal/).
 
 This page contains Tulip plugins using [Tulip API](http://tulip.labri.fr/Documentation/current/doxygen/html/index.html) or [Tulip Python API](http://tulip.labri.fr/Documentation/current/tulip-python/html). They are implementation of well-known (orless know) graph algorithms and network analysis methods.
 
-## Available Plugins
-
-### [Transportation Networks Design](https://github.com/fqueyroi/tulip_plugins/tree/master/TransportationNetworks)
+## [Transportation Networks Design](https://github.com/fqueyroi/tulip_plugins/tree/master/TransportationNetworks)
 
 Directory "TransportationNetworks" contains two transportation network construction algorithms. 
 - SPRouting: use iterative shortest-path routing of flow
 - PhysariumSolver: use biologically inspired routing and edge length update.
 
 The two algorithm only differ in the way flows are routed along the networks. 
+
+## Clustering
+
+### [Cliques](https://github.com/fqueyroi/tulip_plugins/tree/master/Cliques)
+
+A plugin to enumerate all [maximal cliques](https://en.wikipedia.org/wiki/Clique_(graph_theory)) in the graph. It uses [the algorithm of Eppstein *et al.*](https://arxiv.org/abs/1006.5440) : vertices are ordered using their degeneracy value (the [K-Cores plugin](https://github.com/Tulip-Dev/tulip/blob/master/plugins/metric/KCores.cpp) in Tulip) in order to speed up the enumeration.
+
 
 ### [Label Propagation](https://github.com/fqueyroi/tulip_plugins/tree/master/LabelPropagation)
 
@@ -36,11 +41,11 @@ and
 detection in large networks.* Physical Review E, 79(6) :066107, 2009.
 
 
-### [Minimum Spanning Tree](https://github.com/fqueyroi/tulip_plugins/tree/master/MinimumSpanningTree)
+## [Minimum Spanning Tree](https://github.com/fqueyroi/tulip_plugins/tree/master/MinimumSpanningTree)
 
 Compute the [Minimum Spanning Tree](https://en.wikipedia.org/wiki/Minimum_spanning_tree) of the graph (Python script) using a [Union-Find](https://en.wikipedia.org/wiki/Kruskal%27s_algorithm) data structure. 
 
-### [Vertex Cycle Cover and Secret Santa!](https://github.com/fqueyroi/tulip_plugins/tree/master/VertexCycleCover)
+## [Vertex Cycle Cover and Secret Santa!](https://github.com/fqueyroi/tulip_plugins/tree/master/VertexCycleCover)
 
 ![Christmas!](http://mumuland.m.u.pic.centerblog.net/750a9603.png)
 
