@@ -1,6 +1,16 @@
+# You can copy the Python file
+# to /PATH/TO/.Tulip-VERSION/plugins/python
+# or /PATH/TO/lib/tulip/python/
+# and it will be automatically loaded at Tulip startup
+###################################################################################################################
 from tulip import tlp
 import tulipplugins
 from collections import OrderedDict
+###################################################################################################################
+# Enumerate all maximal cliques in the graph
+# using [Eppstein et al.,2010] method. 
+# see: https://en.wikipedia.org/wiki/Clique_(graph_theory)
+# and: https://arxiv.org/abs/1006.5440
 ###################################################################################################################
 class CliquesEnum(tlp.Algorithm):
   def __init__(self, context):
@@ -14,7 +24,7 @@ class CliquesEnum(tlp.Algorithm):
   def check(self):
     return (True, "")
   #########################################################	
-  def saveClique(self,G,R) :        
+  def saveClique(self,R) :        
     if self.create_sg :
       nodes=[];
       for n in R :
@@ -28,31 +38,31 @@ class CliquesEnum(tlp.Algorithm):
         prop_memb.pushBackNodeEltValue(n,self.nb_cliques);
     self.nb_cliques = self.nb_cliques + 1;
   #########################################################
-  def getNeighborhoodSet(self,G,u) :
+  def getNeighborhoodSet(self,u) :
     	N = set([]);
-    	for v in G.getInOutNodes(u) :
+    	for v in self.graph.getInOutNodes(u) :
     		N.add(v);
     	return N;
   #########################################################		
-  def choosePivot(self,G,C) :
+  def choosePivot(self,C) :
     	pivot = tlp.node();
     	maxinter = 0;
     	for u in C :
-    		val =  len(C & self.getNeighborhoodSet(G,u));
+    		val =  len(C & self.getNeighborhoodSet(u));
     		if val >= maxinter :
       			pivot = u;
       			maxinter = val;
     	return pivot;
   ################################################################################################################
-  def maxCliquePivot(self,G,P,R,X) :
+  def maxCliquePivot(self,P,R,X) :
     C = P | X;
     if len(C) == 0 :
-      self.saveClique(G,R);
+      self.saveClique(R);
     else :
-    		pivot = self.choosePivot(G,C);
-    		A = P - self.getNeighborhoodSet(G,pivot);
+    		pivot = self.choosePivot(C);
+    		A = P - self.getNeighborhoodSet(pivot);
     		for x in A :
-    			self.maxCliquePivot(G,P & self.getNeighborhoodSet(G,x),R | set([x]),X & self.getNeighborhoodSet(G,x));							
+    			self.maxCliquePivot(P & self.getNeighborhoodSet(x),R | set([x]),X & self.getNeighborhoodSet(x));							
     			P = P - set([x]);
     			X = X | set([x]);
   ################################################################################################################
@@ -83,7 +93,7 @@ class CliquesEnum(tlp.Algorithm):
     	
     	## start clique detection
     for i in range(len(order)) :
-      Nu = self.getNeighborhoodSet(self.graph,order[i]);
+      Nu = self.getNeighborhoodSet(order[i]);
       if i == len(order)-1 :
         P = set();
       else :
@@ -92,7 +102,7 @@ class CliquesEnum(tlp.Algorithm):
         X = set();
       else :
         X = Nu & set(order[0:i]);
-      self.maxCliquePivot(self.graph,P,set([order[i]]),X);    		
+      self.maxCliquePivot(P,set([order[i]]),X);    		
     ## end
     return True
 ###################################################################################################################
