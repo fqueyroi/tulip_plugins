@@ -22,6 +22,8 @@ The two algorithm only differ in the way flows are routed along the networks.
 
 A plugin to enumerate all [maximal cliques](https://en.wikipedia.org/wiki/Clique_(graph_theory)) in the graph. It uses [the algorithm of Eppstein *et al.*](https://arxiv.org/abs/1006.5440) : vertices are ordered using their degeneracy value (the [K-Cores plugin](https://github.com/Tulip-Dev/tulip/blob/master/plugins/metric/KCores.cpp) in Tulip) in order to speed up the enumeration.
 
+**Warning!** This python plugin uses `collections.OrderedDict`. For python version prior to 2.7, you need to install the package: `pip install ordereddict`
+
 
 ### [Label Propagation](https://github.com/fqueyroi/tulip_plugins/tree/master/LabelPropagation)
 
