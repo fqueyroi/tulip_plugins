@@ -24,6 +24,9 @@ A plugin to enumerate all [maximal cliques](https://en.wikipedia.org/wiki/Clique
 
 **Warning!** This python plugin uses `collections.OrderedDict`. For python version prior to 2.7, you need to install the package: `pip install ordereddict`
 
+### [Clique Percolation](https://github.com/fqueyroi/tulip_plugins/tree/master/Cliques)
+
+An implementation of the [Clique Percolation Method](https://en.wikipedia.org/wiki/Clique_percolation_method) that finds an overlapping clustering of the graph. It does so by merging the k-cliques that share k-1 vertices (k is a parameter of the algorithm). We actually use the plugin `CliqueEnum` to find maximal cliques rather than enumerating all $k$-cliques. 
 
 ### [Label Propagation](https://github.com/fqueyroi/tulip_plugins/tree/master/LabelPropagation)
 
