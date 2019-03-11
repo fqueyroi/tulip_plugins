@@ -14,7 +14,9 @@ Directory "TransportationNetworks" contains two transportation network construct
 - SPRouting: use iterative shortest-path routing of flow
 - PhysariumSolver: use biologically inspired routing and edge length update.
 
-The two algorithm only differ in the way flows are routed along the networks. 
+The two algorithm only differ in the way flows are routed along the networks. For more details, check 
+
+> Queyroi, F. (2018). Biological and Shortest-Path Routing Procedures for Transportation Network Design. arXiv preprint [arXiv:1803.03528](https://arxiv.org/abs/1803.03528).
 
 ## Clustering
 
