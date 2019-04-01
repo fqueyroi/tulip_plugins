@@ -47,6 +47,15 @@ and
 >Ian XY Leung, Pan Hui, Pietro Lìo, and Jon Crowcroft. *Towards real-time community
 detection in large networks.* Physical Review E, 79(6) :066107, 2009.
 
+### [K-Peaks Clustering](https://github.com/fqueyroi/tulip_plugins/tree/master/KPeaks)
+
+
+<a href="url"><img src="https://www.researchgate.net/profile/Francois_Queyroi/publication/272546777/figure/fig5/AS:668514037792772@1536397575618/Four-different-decompositions-of-a-graph-into-fixed-points-of-degree-peeling-The-induced.ppm" align="left" height="230" width="400" ></a>
+
+A variation of the famous [K-Cores](https://en.wikipedia.org/wiki/Degeneracy_(graph_theory)) decomposition of the graph.  
+ In the example, node labels corresponds to K-cores values and the hulls to the K-Peaks decomposition. The k-peak correspond to the maximal subgraph whose core value is k after the removal of nodes with a peak values above k. See for details
+ 
+ > J. Abello and F. Queyroi (2014). *Network decomposition into fixed points of degree peeling*. Social Network Analysis and Mining, 4(1), 191.
 
 ## [Minimum Spanning Tree](https://github.com/fqueyroi/tulip_plugins/tree/master/MinimumSpanningTree)
 
