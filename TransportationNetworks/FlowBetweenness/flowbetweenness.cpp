@@ -1,5 +1,6 @@
 #include "flowbetweenness.h"
-#include "flowbetweenness.h"
+
+#include <tulip/ForEach.h>
 
 using namespace tlp;
 using namespace std;
