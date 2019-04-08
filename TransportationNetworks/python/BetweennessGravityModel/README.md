@@ -1,0 +1,3 @@
+# Flow Betweenness Computation with a gravity modelisation of the flows
+
+A Tulip-Python plugin version of the 'FlowBetweenness' plugin using a [gravity model of flow](https://en.wikipedia.org/wiki/Gravity_model_of_trade). Given nodes' position *P* and weight *W*, the traffic flow between nodes *u* and *v* equals *W(u)W(v) / Dist(u,v)^2* where *Dist* is the euclidian distance between *u* and *v* according to *P*. Is those parameters are not provided, the flow between two nodes is equal to *1* and the values computed correspond to the [Betweenness Centrality metric](https://en.wikipedia.org/wiki/Betweenness_centrality).
