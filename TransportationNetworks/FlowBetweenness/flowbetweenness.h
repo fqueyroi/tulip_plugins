@@ -10,6 +10,8 @@
 /** This plugin is an implementation of the Flow Betweenness measure.
  *  This generalize the betweenness centrality measure to the situation where
  *  shortest-paths between pairs of nodes are variables (given by the user).
+ *  If flow edges forms a clique with flow values of 0.5 then the flow
+ *  betweenness is equal to the betweenness centrality.
  *
  * See:
  *  F. Queyroi, \n
