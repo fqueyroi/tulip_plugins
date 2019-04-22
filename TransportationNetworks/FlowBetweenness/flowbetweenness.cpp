@@ -5,41 +5,6 @@
 using namespace tlp;
 using namespace std;
 //================================================================================
-// Methods and classes to sort nodes according to their degree
-//================================================================================
-struct NodeDeg {
-    NodeDeg ( const double d = DBL_MAX, const tlp::node n= tlp::node()) : d(d),n(n) {}
-    bool operator==(const NodeDeg &b) const {return n == b.n;}
-    bool operator!=(const NodeDeg &b) const {return n != b.n;}
-    double d;
-    tlp::node n;
-};
-//================================================================================
-struct HighNodeDeg {
-    bool operator()(const NodeDeg&  a,const NodeDeg&  b ) const {
-        if (fabs(a.d - b.d) > 1.E-9)
-            return (a.d > b.d);
-        else
-            return (a.n.id < b.n.id);
-    }
-};
-//================================================================================
-//Sort the nodes of g in decreasing order of g.deg
-//================================================================================
-void sortNodesByDeg(Graph* g,vector<node>& sorted){
-    sorted.clear();
-    //sort nodes decreasingly by weighted degree
-    set<NodeDeg,HighNodeDeg> sorted_nd;
-    node u;
-    forEach(u,g->getNodes()){
-            sorted_nd.insert(NodeDeg(g->deg(u),u));
-    }
-    set<NodeDeg,HighNodeDeg>::const_iterator it;
-    for(it=sorted_nd.begin();it!=sorted_nd.end();++it){
-        sorted.push_back((*it).n);
-    }
-}
-//================================================================================
 PLUGIN(FlowBetweenness)
 //================================================================================
 // Methods and classes for shortest-path computation
@@ -71,6 +36,7 @@ struct LessDikjstraElement {
 void FlowBetweenness::computePaths(tlp::Graph* g,
                                    tlp::DoubleProperty* _length,
                                    tlp::node src,
+                                   bool directed,
                                    tlp::MutableContainer<std::list<node> > &ancestors,
                                    tlp::DoubleProperty& nb_paths,
                                    std::stack<node>& S){
@@ -95,9 +61,8 @@ void FlowBetweenness::computePaths(tlp::Graph* g,
         dikjstraTable.erase(it);
         S.push(u.n);
 
-
         edge e;
-        forEach(e, g->getInOutEdges(u.n)) {
+        forEach(e, (directed ? g->getOutEdges(u.n) : g->getInOutEdges(u.n)) ) {
             node v = g->opposite(e, u.n);
             assert(_length->getEdgeValue(e) > 0);
 
@@ -142,31 +107,23 @@ void FlowBetweenness::computePaths(tlp::Graph* g,
 //================================================================================
 namespace{
 const char * paramHelp[] = {
+    // directed
+    "Indicates if the transportation network should be considered as directed or not.",
     // are road
-    HTML_HELP_OPEN() \
-    HTML_HELP_DEF( "type", "BooleanProperty" ) \
-    HTML_HELP_BODY() \
-    "is road" \
-    HTML_HELP_CLOSE(),
+    "True for edges in the graph that correspond to the transportation network.<br>"
+    "False for the edges that correspond to flow value.",
     // flow value
-    HTML_HELP_OPEN() \
-    HTML_HELP_DEF( "type", "DoubleProperty" ) \
-    HTML_HELP_BODY() \
-    "flow length" \
-    HTML_HELP_CLOSE(),
+    "Flow exchanged on the flow edges.",
     // length
-    HTML_HELP_OPEN() \
-    HTML_HELP_DEF( "type", "DoubleProperty" ) \
-    HTML_HELP_BODY() \
-    "Edges length" \
-    HTML_HELP_CLOSE()
+    "Length of edges in the transportation network."
 };
 }
-//================================================================================
+
 FlowBetweenness::FlowBetweenness(const PluginContext *context): DoubleAlgorithm(context){
-    addInParameter<BooleanProperty>("is road",paramHelp[0],"",true);
-    addInParameter<DoubleProperty>("flow value",paramHelp[1],"",true);
-    addInParameter<DoubleProperty>("length",paramHelp[2],"",false);
+    addInParameter<bool>("directed",paramHelp[0],"false",true);
+    addInParameter<BooleanProperty>("is road",paramHelp[1],"",true);
+    addInParameter<DoubleProperty>("flow value",paramHelp[2],"",true);
+    addInParameter<DoubleProperty>("length",paramHelp[3],"",false);
 }
 //================================================================================
 bool FlowBetweenness::check(string &errMsg){
@@ -176,11 +133,13 @@ bool FlowBetweenness::check(string &errMsg){
 //================================================================================
 bool FlowBetweenness::run(){
     // Get Parameters
+    bool directed;
     DoubleProperty* input_length;
     DoubleProperty* flow_value;
     BooleanProperty* is_road;
 
     if(dataSet!=0){
+        dataSet->get("directed",directed);
         dataSet->get("length",input_length);
         dataSet->get("is road",is_road);
         dataSet->get("flow value",flow_value);
@@ -218,23 +177,6 @@ bool FlowBetweenness::run(){
     }else
         length.setAllEdgeValue(1.);
 
-    // Find a small vertex cover of flow graph by changing edge orientations
-    // so that for each edge (a,b), if deg(b) > deg(a) then a-> b
-    vector<node> sorted_nodes;
-    BooleanProperty visited(flow);
-    visited.setAllNodeValue(false);
-    sortNodesByDeg(flow,sorted_nodes);
-    for(unsigned int i=0;i<sorted_nodes.size();++i){
-        node u = sorted_nodes[i];
-        visited.setNodeValue(u,true);
-        edge e;
-        forEach(e,flow->getOutEdges(u)){
-            if(!visited.getNodeValue(flow->opposite(e,u))){
-                flow->reverse(e);
-            }
-        }
-    }
-
     // Get source and sink nodes
     vector<node> source_nodes;
     IntegerProperty index_src_nodes(graph);
@@ -270,15 +212,15 @@ bool FlowBetweenness::run(){
     // Main loop
     result->setAllNodeValue(0.);
     result->setAllEdgeValue(0.);
-    vector<node>::const_iterator itn_src;
-    for(itn_src=source_nodes.begin();itn_src!=source_nodes.end();++itn_src){
+
+    for(auto itn_src=source_nodes.begin();itn_src!=source_nodes.end();++itn_src){
         node src=*itn_src;
         MutableContainer<list<node> > ancestors;
         DoubleProperty nb_paths(graph);
         stack<node> S;
 
         //Compute Path tree from src to others nodes in G
-        computePaths(roads,&length,src,ancestors,nb_paths,S);
+        computePaths(roads,&length,src,directed,ancestors,nb_paths,S);
 
         DoubleProperty delta(graph);
         delta.setAllNodeValue(0.);
@@ -287,7 +229,6 @@ bool FlowBetweenness::run(){
             node w = S.top();
             S.pop();
             list<node> anc = ancestors.get(w);
-            list<node>::const_iterator itn;
 
             double sw_flow = 0.;
             if(index_sink_nodes.getNodeValue(w)>=0){
@@ -295,11 +236,11 @@ bool FlowBetweenness::run(){
             }
             if(w.id != src.id)
                 result->setNodeValue(w,result->getNodeValue(w) + delta.getNodeValue(w));
-            for(itn=anc.begin();itn!=anc.end();++itn){
+            for(auto itn=anc.begin();itn!=anc.end();++itn){
                 node v = *itn;
                 double inc_delta = nb_paths.getNodeValue(v)/nb_paths.getNodeValue(w)*(sw_flow+delta.getNodeValue(w));
                 delta.setNodeValue(v,delta.getNodeValue(v)+inc_delta);
-                edge e  = roads->existEdge(v,w,false);
+                edge e  = roads->existEdge(v,w,directed);
                 assert(e.isValid());
                 result->setEdgeValue(e, result->getEdgeValue(e) + inc_delta);
             }
