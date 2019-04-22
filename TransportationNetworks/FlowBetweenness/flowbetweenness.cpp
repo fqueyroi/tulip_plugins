@@ -115,7 +115,11 @@ const char * paramHelp[] = {
     // flow value
     "Flow exchanged on the flow edges.",
     // length
-    "Length of edges in the transportation network."
+    "Length of edges in the transportation network.",
+    // Output average path length
+    "Average path length of the network with the flow values given.",
+    // Total flow
+    "Sum of the given flow values."
 };
 }
 
@@ -124,6 +128,8 @@ FlowBetweenness::FlowBetweenness(const PluginContext *context): DoubleAlgorithm(
     addInParameter<BooleanProperty>("is road",paramHelp[1],"",true);
     addInParameter<DoubleProperty>("flow value",paramHelp[2],"",true);
     addInParameter<DoubleProperty>("length",paramHelp[3],"",false);
+    addOutParameter<double>("Average path length",paramHelp[4],"-1");
+    addOutParameter<double>("Total flow",paramHelp[5],"-1");
 }
 //================================================================================
 bool FlowBetweenness::check(string &errMsg){
@@ -212,6 +218,8 @@ bool FlowBetweenness::run(){
     // Main loop
     result->setAllNodeValue(0.);
     result->setAllEdgeValue(0.);
+    double avg_path_length = 0.;
+    double total_flow      = 0.;
 
     for(auto itn_src=source_nodes.begin();itn_src!=source_nodes.end();++itn_src){
         node src=*itn_src;
@@ -233,6 +241,7 @@ bool FlowBetweenness::run(){
             double sw_flow = 0.;
             if(index_sink_nodes.getNodeValue(w)>=0){
                 sw_flow=flow_mat[index_src_nodes.getNodeValue(src)][index_sink_nodes.getNodeValue(w)];
+                total_flow += sw_flow;
             }
             if(w.id != src.id)
                 result->setNodeValue(w,result->getNodeValue(w) + delta.getNodeValue(w));
@@ -243,10 +252,15 @@ bool FlowBetweenness::run(){
                 edge e  = roads->existEdge(v,w,directed);
                 assert(e.isValid());
                 result->setEdgeValue(e, result->getEdgeValue(e) + inc_delta);
+                avg_path_length += length.getEdgeValue(e) * inc_delta;
             }
 
         }
     }
+
+    dataSet->set("Average path length",avg_path_length);
+    dataSet->set("Total flow",total_flow);
+
     graph->delSubGraph(roads);
     graph->delSubGraph(flow);
     return true;
