@@ -79,21 +79,10 @@ void FlowBetweenness::computePaths(tlp::Graph* g,
     set<DikjstraElement *, LessDikjstraElement> dikjstraTable;
     MutableContainer<DikjstraElement *> mapDik;
     mapDik.setAll(0);
-    node n;
-    forEach (n, g->getNodes()) {
-        //init all nodes to +inf
-        if (n != src) {
-            DikjstraElement *tmp = new DikjstraElement(DBL_MAX / 2. + 10., n);
-            dikjstraTable.insert(tmp);
-            mapDik.set(n.id, tmp);
-        }
-        //init starting node to 0
-        else {
-            DikjstraElement * tmp = new DikjstraElement(0,n);
-            dikjstraTable.insert(tmp);
-            mapDik.set(n.id, tmp);
-        }
-    }
+
+    DikjstraElement * tmp = new DikjstraElement(0,src);
+    dikjstraTable.insert(tmp);
+    mapDik.set(src.id, tmp);
     ancestors.setAll(list<node>());
     nb_paths.setAllNodeValue(0);
     nb_paths.setNodeValue(src,1);
@@ -110,24 +99,34 @@ void FlowBetweenness::computePaths(tlp::Graph* g,
         edge e;
         forEach(e, g->getInOutEdges(u.n)) {
             node v = g->opposite(e, u.n);
-            DikjstraElement & dEle = *mapDik.get(v.id);
             assert(_length->getEdgeValue(e) > 0);
 
+            DikjstraElement* dEle = mapDik.get(v.id);
+
             //new shortest path found
-            if ( (u.dist + _length->getEdgeValue(e) ) < dEle.dist) {
-                dikjstraTable.erase(&dEle);
-                dEle.dist = u.dist + _length->getEdgeValue(e);
-                dikjstraTable.insert(&dEle);
-                ancestors.set(v.id,list<node>());
-                //                ancestor.set(v.id,u.n);
-                nb_paths.setNodeValue(v,0);
-            }
-            //add path if shortest
-            if((u.dist + _length->getEdgeValue(e) ) == dEle.dist){
-                list<node> src_c=ancestors.get(v.id);
+            if( dEle == nullptr ){
+                dEle = new DikjstraElement(u.dist + _length->getEdgeValue(e),v);
+                dikjstraTable.insert(dEle);
+                mapDik.set(v.id, dEle);
+                list<node> src_c = ancestors.get(v.id);
                 src_c.push_back(u.n);
                 ancestors.set(v.id,src_c);
-                nb_paths.setNodeValue(v,nb_paths.getNodeValue(v)+nb_paths.getNodeValue(u.n));
+                nb_paths.setNodeValue(v,nb_paths.getNodeValue(u.n));
+            }else{
+                if ( u.dist + _length->getEdgeValue(e) < dEle->dist ) {
+                    dikjstraTable.erase(dEle);
+                    dEle->dist = u.dist + _length->getEdgeValue(e);
+                    dikjstraTable.insert(dEle);
+                    ancestors.set(v.id,list<node>());
+                    nb_paths.setNodeValue(v,0);
+                }
+                //add path if shortest
+                if( u.dist + _length->getEdgeValue(e) == dEle->dist ){
+                    list<node> src_c = ancestors.get(v.id);
+                    src_c.push_back(u.n);
+                    ancestors.set(v.id,src_c);
+                    nb_paths.setNodeValue(v,nb_paths.getNodeValue(v)+nb_paths.getNodeValue(u.n));
+                }
             }
         }
     }
@@ -135,7 +134,8 @@ void FlowBetweenness::computePaths(tlp::Graph* g,
     node tmpN;
     forEach(tmpN, g->getNodes()) {
         DikjstraElement *dEle = mapDik.get(tmpN.id);
-        delete dEle;
+        if( dEle != nullptr )
+            delete dEle;
     }
 }
 
@@ -171,10 +171,6 @@ FlowBetweenness::FlowBetweenness(const PluginContext *context): DoubleAlgorithm(
 //================================================================================
 bool FlowBetweenness::check(string &errMsg){
     errMsg="";
-    if(!tlp::ConnectedTest::isConnected(graph)){
-        errMsg="The graph must be connected.";
-        return false;
-    }
     return true;
 }
 //================================================================================
@@ -272,6 +268,7 @@ bool FlowBetweenness::run(){
     }
 
     // Main loop
+    result->setAllNodeValue(0.);
     result->setAllEdgeValue(0.);
     vector<node>::const_iterator itn_src;
     for(itn_src=source_nodes.begin();itn_src!=source_nodes.end();++itn_src){
@@ -291,10 +288,13 @@ bool FlowBetweenness::run(){
             S.pop();
             list<node> anc = ancestors.get(w);
             list<node>::const_iterator itn;
+
             double sw_flow = 0.;
             if(index_sink_nodes.getNodeValue(w)>=0){
                 sw_flow=flow_mat[index_src_nodes.getNodeValue(src)][index_sink_nodes.getNodeValue(w)];
             }
+            if(w.id != src.id)
+                result->setNodeValue(w,result->getNodeValue(w) + delta.getNodeValue(w));
             for(itn=anc.begin();itn!=anc.end();++itn){
                 node v = *itn;
                 double inc_delta = nb_paths.getNodeValue(v)/nb_paths.getNodeValue(w)*(sw_flow+delta.getNodeValue(w));
