@@ -1,0 +1,11 @@
+cmake_minimum_required(VERSION 2.8)
+FIND_PACKAGE(TULIP REQUIRED)
+
+
+ADD_LIBRARY(AverageTravelTime-${TULIP_VERSION} SHARED TimeDependentDijkstra.cpp AverageTravelTime.cpp)
+TARGET_LINK_LIBRARIES(AverageTravelTime-${TULIP_VERSION} ${TULIP_CORE_LIBRARY})
+INSTALL(TARGETS AverageTravelTime-${TULIP_VERSION} DESTINATION ${TULIP_PLUGINS_DIR} COMPONENT AverageTravelTime)
+
+ADD_LIBRARY(FastestPathSelection-${TULIP_VERSION} SHARED TimeDependentDijkstra.cpp FastestPathSelection.cpp)
+TARGET_LINK_LIBRARIES(FastestPathSelection-${TULIP_VERSION} ${TULIP_CORE_LIBRARY})
+INSTALL(TARGETS FastestPathSelection-${TULIP_VERSION} DESTINATION ${TULIP_PLUGINS_DIR} COMPONENT FastestPathSelection)
