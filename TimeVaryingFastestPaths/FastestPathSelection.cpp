@@ -6,14 +6,8 @@
 #include <tulip/StringProperty.h>
 
 #include <vector>
-#include <algorithm>
-#include <utility>
-#include <numeric>
-
-
 
 #include "TimeDependentDijkstra.h"
-
 
 using namespace tlp;
 using namespace std;
@@ -30,24 +24,11 @@ namespace{
         "Arrival times of each edge.",
         // starting time
         "Starting time of the journey."
+        // Cost stopover
+        "The cost in time of stoping at a non-target vertex."
     };
 }
 //================================================================================
-template <typename T>
-vector<size_t> sort_indexes(const vector<T> &v) {
-
-  // initialize original index locations
-  vector<size_t> idx(v.size());
-  iota(idx.begin(), idx.end(), 0);
-
-  // sort indexes based on comparing values in v
-  sort(idx.begin(), idx.end(),
-       [&v](size_t i1, size_t i2) {return v[i1] < v[i2];});
-
-  return idx;
-}
-//================================================================================
-
 /** \addtogroup selection */
 
 /**
@@ -63,11 +44,15 @@ public:
   "18/05/2019","","1.0","Measure")
   //================================================================================
   FastestPathSelection(tlp::PluginContext *context) : BooleanAlgorithm(context){
-    addInParameter<unsigned int>("id src",paramHelp[0],"432",true);
-    addInParameter<unsigned int>("id tgt",paramHelp[1],"173",true);
+    addInParameter<unsigned int>("id src",paramHelp[0],"598",true);
+    addInParameter<unsigned int>("id tgt",paramHelp[1],"73",true);
     addInParameter<DoubleVectorProperty>("Departures",paramHelp[2],"departures",true);
     addInParameter<DoubleVectorProperty>("Arrivals",paramHelp[3],"arrivals",true);
-    addInParameter<double>("Start",paramHelp[4],"14335",true);
+    addInParameter<double>("Cost Stopover",paramHelp[4],"0",true);
+    addInParameter<double>("Start",paramHelp[4],"14380",true);
+    addOutParameter<double>("Duration","Duration of the trip","-1");
+    addOutParameter<double>("Wait","Total wait during the trip","-1");
+    addOutParameter<int>("Nb Stops","Number of stopover during the trip","-1");
   }
   //================================================================================
   bool run() override{
@@ -77,6 +62,7 @@ public:
     DoubleVectorProperty* departures;
     DoubleVectorProperty* arrivals;
     double start = 14335.;
+    double cost_stop = 0.;
 
     if(dataSet!=0){
       dataSet->get("id src",id_src);
@@ -84,6 +70,7 @@ public:
       dataSet->get("Departures",departures);
       dataSet->get("Arrivals",arrivals);
       dataSet->get("Start",start);
+      dataSet->get("Cost Stopover",cost_stop);
     }
 
     //Get src and tgt nodes
@@ -95,9 +82,7 @@ public:
       pluginProgress->setError("Graph id "+graph->getName()+" does not contain node id "+to_string(id_tgt));
 
 
-    // Sort arrival and departure times according to departure time
-    EdgeStaticProperty<vector<double> > dep_time(graph);
-    EdgeStaticProperty<vector<double> > arr_time(graph);
+    // Check if departures and arrivals size are equals
     for(auto e : graph->getEdges()){
       vector<double> vect_dep = departures->getEdgeValue(e);
       vector<double> vect_arr = arrivals->getEdgeValue(e);
@@ -105,19 +90,12 @@ public:
         pluginProgress->setError("Error: edge "+to_string(e.id)+"'s departure and arrival are not of the same size.");
         return false;
       }
-      vector<double> sorted_vect_dep;
-      vector<double> sorted_vect_arr;
-      for (auto i : sort_indexes(vect_dep)){
-        sorted_vect_dep.push_back(vect_dep[i]);
-        sorted_vect_arr.push_back(vect_arr[i]);
-      }
-      dep_time.setEdgeValue(e,sorted_vect_dep);
-      arr_time.setEdgeValue(e,sorted_vect_arr);
     }
 
     NodeStaticProperty<double> nodeDuration(graph);
     NodeStaticProperty<double> waitingTime(graph);
-    TimeDependentDijkstra tvg_dikj(graph,src,&dep_time,&arr_time,nodeDuration,waitingTime);
+    NodeStaticProperty<unsigned int> nbOfSteps(graph);
+    TimeDependentDijkstra tvg_dikj(graph,src,departures,arrivals,nodeDuration,waitingTime,nbOfSteps,cost_stop);
     tvg_dikj.compute(start);
 
     // Compute fastest path
@@ -140,8 +118,8 @@ public:
       edge e = path[i];
       unsigned int ind_e = indexes[i];
       cout << "  To Node " << graph->target(e).id
-           << " dep: " << int(dep_time[e][ind_e])
-           << " arr: " << int(arr_time[e][ind_e])
+           << " dep: " << int(departures->getEdgeValue(e)[ind_e])
+           << " arr: " << int(arrivals->getEdgeValue(e)[ind_e])
            << " D: "   << nodeDuration[graph->target(e)]
            << " W: "   << waitingTime[graph->target(e)]
            << endl;
@@ -150,6 +128,9 @@ public:
       result->setNodeValue(graph->target(e),true);
     }
 
+    dataSet->set("Duration",nodeDuration[tgt]);
+    dataSet->set("Wait",waitingTime[tgt]);
+    dataSet->set("Nb Stops",int(path.size() - 1));
     return true;
   }
 };
