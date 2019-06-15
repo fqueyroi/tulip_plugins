@@ -35,8 +35,8 @@ class TVGLlyodsImport(tlp.ImportModule):
     tlp.ImportModule.__init__(self, context)
     self.addFileParameter("moves filepath", True, "path to Llyods moves file")
     self.addFileParameter("ports filepath", True, "path to Llyods ports file")
-    self.addStringCollectionParameter("Type", "Network type: Space L/P/Pathways",
-                                      "SpaceL;SpaceP;Pathways")
+    self.addStringCollectionParameter("Type", "Network type: Space L/P or A (see doc)",
+                                      "SpaceL;SpaceP;SpaceA")
     self.addBooleanParameter("keep all moves?", "If false,  remove P and I moves", "False", True)
     self.addBooleanParameter("keep all ports?", "If false,  remove ports with type diff than 1")
     self.addFloatParameter("min date", "Minimum date included", "14335", False)
@@ -49,8 +49,8 @@ class TVGLlyodsImport(tlp.ImportModule):
     self.max_date = 99999
     self.net_type = "SpaceL"
     self.netTypeFunction = {"SpaceL": self.spaceLIndexes,
-                            "SpaceP": self.spacePNoRepIndexes,
-                            "Pathways": self.spaceSubPathsIndexes}
+                            "SpaceP": self.spacePIndexes,
+                            "SpaceA": self.spaceANoRepIndexes}
     self.min_freq = 0.143
   #############################################################################################
   def readPorts(self, port_filepath):
@@ -98,7 +98,7 @@ class TVGLlyodsImport(tlp.ImportModule):
   def spaceLIndexes(self,ports,deps,arrs):
     return [(i,i+1) for i in range(len(ports) - 1)];
   #############################################################################################
-  def spacePNoRepIndexes(self,ports,deps,arrs):
+  def spaceANoRepIndexes(self,ports,deps,arrs):
     res = []
     for i in range(len(ports) - 1) :
       visited = set()
@@ -110,7 +110,7 @@ class TVGLlyodsImport(tlp.ImportModule):
           res.append((i,j))
     return res
   #############################################################################################
-  def spaceSubPathsIndexes(self,ports,deps,arrs):
+  def spacePIndexes(self,ports,deps,arrs):
     decomp = PathwayDetectionSimple.find_valid_subpath_decomp(ports)
     res = []
     start_index = 0
