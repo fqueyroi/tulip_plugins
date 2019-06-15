@@ -15,9 +15,9 @@ using namespace std;
 namespace{
     const char * paramHelp[] = {
         // id node src
-        "Id of src node",
+        "Id of source node",
         // id node tgt
-        "Id of tgt node",
+        "Id of target node",
         // departures
         "Departure times of each edge.",
         // arrival
@@ -25,13 +25,19 @@ namespace{
         // starting time
         "Starting time of the journey."
         // Cost stopover
-        "The cost in time of stoping at a non-target vertex."
+        "The cost in time of stoping on a non-target node."
     };
 }
 //================================================================================
 /** \addtogroup selection */
 
-/**
+/** Select one fastest-path from node id_src to node id_tgt
+ * using the times of arrival of departure on each (directed) edges
+ * with "Start" as starting time for the travel.
+ *
+ * The parameter "Cost stopover" is the time added for each internal nodes used.
+ * In the algorithm, if we arrive at time t on a node with a cost of c, the next best departures
+ * will be found in the time interval [t + c,T].
  *
  */
 //================================================================================
@@ -44,12 +50,12 @@ public:
   "18/05/2019","","1.0","Measure")
   //================================================================================
   FastestPathSelection(tlp::PluginContext *context) : BooleanAlgorithm(context){
-    addInParameter<unsigned int>("id src",paramHelp[0],"598",true);
-    addInParameter<unsigned int>("id tgt",paramHelp[1],"73",true);
-    addInParameter<DoubleVectorProperty>("Departures",paramHelp[2],"departures",true);
-    addInParameter<DoubleVectorProperty>("Arrivals",paramHelp[3],"arrivals",true);
+    addInParameter<unsigned int>("id src",paramHelp[0],"0",true);
+    addInParameter<unsigned int>("id tgt",paramHelp[1],"1",true);
+    addInParameter<DoubleVectorProperty>("Departures",paramHelp[2],"",true);
+    addInParameter<DoubleVectorProperty>("Arrivals",paramHelp[3],"",true);
     addInParameter<double>("Cost Stopover",paramHelp[4],"0",true);
-    addInParameter<double>("Start",paramHelp[4],"14380",true);
+    addInParameter<double>("Start",paramHelp[4],"0",true);
     addOutParameter<double>("Duration","Duration of the trip","-1");
     addOutParameter<double>("Wait","Total wait during the trip","-1");
     addOutParameter<int>("Nb Stops","Number of stopover during the trip","-1");
@@ -57,8 +63,8 @@ public:
   //================================================================================
   bool run() override{
     // Get Parameters
-    unsigned int id_src = 432;
-    unsigned int id_tgt = 173;
+    unsigned int id_src = 0;
+    unsigned int id_tgt = 1;
     DoubleVectorProperty* departures;
     DoubleVectorProperty* arrivals;
     double start = 14335.;
@@ -76,11 +82,14 @@ public:
     //Get src and tgt nodes
     node src = node(id_src);
     node tgt = node(id_tgt);
-    if(!graph->isElement(src))
+    if(!graph->isElement(src)){
       pluginProgress->setError("Graph id "+graph->getName()+" does not contain node id "+to_string(id_src));
-    if(!graph->isElement(tgt))
+      return false;
+    }
+    if(!graph->isElement(tgt)){
       pluginProgress->setError("Graph id "+graph->getName()+" does not contain node id "+to_string(id_tgt));
-
+      return false;
+    }
 
     // Check if departures and arrivals size are equals
     for(auto e : graph->getEdges()){

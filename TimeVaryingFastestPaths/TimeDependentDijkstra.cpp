@@ -8,7 +8,6 @@
 
 
 #include <tulip/BooleanProperty.h>
-#include <tulip/StringProperty.h>
 #include <tulip/GraphTools.h>
 
 using namespace tlp;
@@ -64,7 +63,7 @@ bool TimeDependentDijkstra::compute(const double start){
     dikjstraTable.insert(tmp);
     mapDik[i++] = tmp;
   }
-  StringProperty* lab = graph->getProperty<StringProperty>("viewLabel");
+
   // main loop
   while (!dikjstraTable.empty()) {
     // select the first element in the list the one with min value
@@ -110,8 +109,6 @@ bool TimeDependentDijkstra::compute(const double start){
     }
   }
 
-//  BooleanProperty* selec = graph->getProperty<BooleanProperty>("viewSelection2");
-//  selec->setAllEdgeValue(false);
   indexSelectedTime.setAll(-1);
   i = 0;
   for (auto n : graph->nodes()) {
@@ -120,7 +117,6 @@ bool TimeDependentDijkstra::compute(const double start){
     waitingTime[n]   = dEle->wait;
     numberOfSteps[n] = dEle->nbSteps;
     for (unsigned int j = 0; j < dEle->usedEdge.size(); ++j){
-//      selec->setEdgeValue(dEle->usedEdge[j],true);
       indexSelectedTime.setEdgeValue(dEle->usedEdge[j],dEle->index_selectedTime[j]);
     }
     delete dEle;
@@ -144,7 +140,6 @@ bool TimeDependentDijkstra::searchPath(node n, vector<edge>& path, vector<int>* 
       if(selection.getEdgeValue(e) || indexSelectedTime[e] < 0)
         continue;
       node s = graph->opposite(e,n);
-//      if(selection.getNodeValue(s) || nodeDurations[s] > nodeDurations[n])
       if(nodeDurations[s] > nodeDurations[n])
         continue;
 
@@ -184,7 +179,6 @@ bool TimeDependentDijkstra::searchPath(node n, BooleanProperty* selection, Doubl
       if(selection->getEdgeValue(e) || indexSelectedTime[e] < 0)
         continue;
       node s = graph->opposite(e,n);
-//      if(selection->getNodeValue(s) || nodeDurations[s] > nodeDurations[n])
       if(nodeDurations[s] > nodeDurations[n])
         continue;
       selection->setEdgeValue(e,true);
