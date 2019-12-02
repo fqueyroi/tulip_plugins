@@ -10,7 +10,7 @@ The following tools are currently under development!
 
 ## Similar Band Network
 
-[MASimilarBandsCrawling.py](https://github.com/fqueyroi/tulip_plugins/tree/master/MetalArchivesScraping/MASimilarBandsCrawling.py) is a Tulip-python Import plugin that generate a network of similar band starting with a given band url. The result is a directed graph: if Metal-archives users find that 'High On Fire' is similar to 'Motorhead', it doesn't mean they find that 'Motorhead' is similar to 'High On Fire'.
+[MASimilarBandsCrawling.py](https://github.com/fqueyroi/tulip_plugins/tree/master/MetalArchivesScraping/MASimilarBandsCrawling.py) is a Tulip-python Import plugin that generate a network of similar band starting with a given band url. The result is a directed graph: if Metal-archives users find that 'High On Fire' is similar to 'Motorhead' (arc from 'High On Fire' to 'Motorhead' with a score >= min score), it doesn't mean they find that 'Motorhead' is similar to 'High On Fire'.
 
 Here's an example of output with parameters:
 - url : https://www.metal-archives.com/bands/Weedeater/
