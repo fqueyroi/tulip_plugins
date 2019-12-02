@@ -51,7 +51,7 @@ class Band:
 	def getheaderinfos(self, soup):
 		band_info = soup.find('div', {'id': "band_info"})
 		band_link_elem = band_info.find('h1', {'class': "band_name"}).find('a')
-		self.name = band_link_elem.text
+		self.name = MAUtils.clean_str(band_link_elem.text)
 		self.ma_id = band_link_elem.get('href')[band_link_elem.get('href').rfind('/') + 1:]
 		band_stats_list = band_info.find('div', {'id': "band_stats"}).findAll('dd')
 		self.country = band_stats_list[0].text
@@ -91,14 +91,14 @@ class Band:
 		temp_is_current = False
 		temp_is_live = False
 		lineup_headers_map = {'Current': (True, False),
-							'Last known': (True, False),
+							'Lastknown': (True, False),
 							'Past': (False, False),
-		                    'Current (Live)': (True, True),
-							'Last known (Live)': (True, True),
-							'Past (Live)': (False, True)}
+		                    'Current(Live)': (True, True),
+							'Lastknown(Live)': (True, True),
+							'Past(Live)': (False, True)}
 		for lineup_table_row in lineup_table_rows:
 			if lineup_table_row.get('class')[0] == 'lineupHeaders':
-				headers_cat = MAUtils.clean_str(lineup_table_row.find('td').text)
+				headers_cat = MAUtils.clean_str(lineup_table_row.find('td').text).replace(' ','')
 				temp_is_current, temp_is_live = lineup_headers_map[headers_cat]
 			elif lineup_table_row.get('class')[0] == 'lineupRow':
 				row_elems = lineup_table_row.findAll('td')
@@ -219,13 +219,13 @@ def exportSimilarBands(bands, path_csv):
 # Use blank logo_path to discard logos
 # logo_path = '/PATH/TO/YOUR/EPIC/METAL/BANDS/LOGO/FOLDER/'
 #
-# url = 'https://www.metal-archives.com/bands/Weedeater/'
+# url = 'https://www.metal-archives.com/bands/Weedeater'
 # band = getBand(url,'', find_reviews = True, find_similar = True)
 # if band is None:
 # 	print('Url {} not valid.'.format(url))
 # else:
 # 	print(band)
-#
+
 # EXPORT CSV EXAMPLE
 #
 # csv_lineup_path = './lineups.csv'
