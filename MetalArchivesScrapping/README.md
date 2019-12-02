@@ -1,4 +1,4 @@
-# Metal Band Network from [metal-archives](https://www.metal-archives.com/)
+# Metal Band Networks from [metal-archives](https://www.metal-archives.com/)
 
 The following tools are currently under development!
 
@@ -10,4 +10,11 @@ The following tools are currently under development!
 
 ## Similar Band Network
 
-- [MASimilarBandsCrawling.py](https://github.com/fqueyroi/tulip_plugins/tree/master/MetalArchivesScrapping/MASimilarBandsCrawling.py) is a Tulip-python Import plugin that generate a network of similar band starting with a given band url. 
+[MASimilarBandsCrawling.py](https://github.com/fqueyroi/tulip_plugins/tree/master/MetalArchivesScrapping/MASimilarBandsCrawling.py) is a Tulip-python Import plugin that generate a network of similar band starting with a given band url.
+
+Here's an example of output with parameters:
+- url : https://www.metal-archives.com/bands/Weedeater/
+- min score: 20
+- max depth: 1
+
+![Similar network example](https://i.imgur.com/vSFSf4Z.png)
