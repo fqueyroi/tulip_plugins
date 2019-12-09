@@ -43,7 +43,7 @@ class Band:
 		  self.savelogo(soup, logofolder)
 		self.lineup = []
 		self.getlineupmembers(soup)
-		self.albums = MADiscogScrapping.getdiscography(soup, self.ma_id, find_reviews)
+		self.albums = MADiscogScraping.getdiscography(soup, self.ma_id, find_reviews)
 		self.similar_bands = [] # list of id/url/score
 		if find_similar:
 			self.getSimilarBands()
