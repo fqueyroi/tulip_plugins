@@ -6,7 +6,7 @@
 from tulip import tlp
 import tulipplugins
 
-import MABandScrapping
+import MABandScraping
 
 class MASimilarBandsCrawling(tlp.ImportModule):
   def __init__(self, context):
@@ -35,9 +35,9 @@ class MASimilarBandsCrawling(tlp.ImportModule):
   def crawlSimilarBands(self, bandNodes, url, current_level):
     if current_level > self.max_depth:
       return
-    print "Scrapping url: {}".format(url)
+    print "Scraping url: {}".format(url)
 
-    band = MABandScrapping.getBand(url,self.logo_folder, find_reviews = False, find_similar = True)
+    band = MABandScraping.getBand(url,self.logo_folder, find_reviews = False, find_similar = True)
     if band is None:
       print "Error: url {} not valid.".format(url)
       return
